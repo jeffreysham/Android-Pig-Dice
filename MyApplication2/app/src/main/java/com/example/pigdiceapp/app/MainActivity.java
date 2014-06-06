@@ -22,18 +22,20 @@ import java.util.Random;
 
 public class MainActivity extends ActionBarActivity {
 
-    static DataService mService;
-    boolean mBound;
+    //TODO all of these need to be more descriptive include what they are ex. currentScoreText playerScoreText computerScoreText
+
+    static DataService mService;  //TODO get rid of m make more descriptive
+    boolean mBound; //TODO no need for this. set service to null on disconnect check if it is null anywhere that needs to happen
     Random rand = new Random();
     Button rollButton;
     Button holdButton;
-    ImageView image;
+    ImageView image; //TODO needs to be more descriptive
     TextView current,player, comp;
     int currentTotal;
     int playerTotal;
     int compTotal;
-    Toast t;
-    boolean turn;//True for player turn, false for computer turn
+    Toast t; //TODO you will have no idea what "t" is later on
+    boolean turn;//True for player turn, false for computer turn //TODO you wont see this comment down the page change this to be player or computer turn
     boolean gameOver;
 
     ServiceConnection mConnection = new ServiceConnection() {
@@ -46,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mBound=false;
+            mBound=false; //TODO get rid of this
         }
     };
 
@@ -56,7 +58,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         turn=true;
         gameOver=false;
-        image=(ImageView) findViewById(R.id.imageView);
+        image=(ImageView) findViewById(R.id.imageView); //TODO all of these ids need to describe their objects ex. R.id.img_dice R.id.txt_currentscore
         current=(TextView)findViewById(R.id.textView);
         player=(TextView)findViewById(R.id.textView2);
         comp =(TextView)findViewById(R.id.textView3);
@@ -83,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void changeTurn(){
-        current.setText("Current Total:             "+currentTotal);
+        current.setText("Current Total:             "+currentTotal); //TODO make these seperate labels
         if(turn){
             turn=false;
             Log.i("run","turn is now false");
@@ -106,7 +108,7 @@ public class MainActivity extends ActionBarActivity {
         }
         currentTotal=0;
         current.setText("Current Total:             "+currentTotal);
-        if(playerTotal>=100|| compTotal >=100){
+        if(playerTotal>=10|| compTotal >=100){
             gameOver();
         }
     }
@@ -144,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
         newGame();
     }
 
-    public static DataService getmService(){
+    public static DataService getmService(){//TODO dont do this. Bind to the service in the other activity
         return mService;
     }
 
@@ -152,7 +154,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onStart() {
         super.onStart();
         Intent i = new Intent(this,DataService.class);
-        bindService(i, mConnection, BIND_AUTO_CREATE);
+        bindService(i, mConnection, BIND_AUTO_CREATE);  //TODO unbind is never called
     }
 
     @Override
@@ -199,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
         return rand.nextInt(6)+1;
     }
 
-    public void decide(){
+    public void decide(){ //TODO what is decide?
         Log.i("run","decide is now called");
         ComputerTurn t = new ComputerTurn();
         t.execute();
@@ -223,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
             super.onPostExecute(aVoid);
             Log.i("run","onPostExecute is now called");
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1000); //TODO this is blocking the main thread. all of this needs to be in doinbackground
                 setDice(num);
 
                 if(!turn&&currentTotal>=20&&count==1) {

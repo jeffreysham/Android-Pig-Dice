@@ -11,8 +11,8 @@ import android.os.IBinder;
 public class DataService extends Service{
 
     private IBinder mBinder = new LocalBinder();
-    int[][] scores;
-    int count=0;
+    int[][] scores; //TODO Make this an arrayList and create a model object to store this stuff in
+    int count=0; //TODO why is this being counted
 
     @Override
     public IBinder onBind(Intent intent) {

@@ -6,11 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class PreviousScoresActivity extends ActionBarActivity {
+public class PreviousScoresActivity extends ActionBarActivity { //TODO this needs to have a tableview
 
 
-    DataService mService;
-    TextView txt;
+    DataService mService; //TODO lose the m, more descriptive
+    TextView txt; //TODO more descriptive
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class PreviousScoresActivity extends ActionBarActivity {
         getScores();
     }
 
-    public void getScores(){
+    public void getScores(){ //This needs to connect to an adapter for a tableview
         int[][] previousScores=mService.getScores();
         int numScores = mService.getNumScores();
         String output="";
@@ -47,7 +47,7 @@ public class PreviousScoresActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.back) {
-            finish();
+            finish(); //TODO nitpick not needed
         }
         return super.onOptionsItemSelected(item);
     }
