@@ -200,6 +200,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             playerTurn = true;
             compTurn = false;
+            gameOver=false;
         }
         rollButton.setEnabled(true);
         holdButton.setEnabled(true);
