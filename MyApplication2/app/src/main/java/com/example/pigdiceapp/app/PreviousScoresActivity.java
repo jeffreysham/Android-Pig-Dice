@@ -1,36 +1,69 @@
 package com.example.pigdiceapp.app;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import com.example.pigdiceapp.app.DataService.LocalBinder;
+import java.util.ArrayList;
 
 public class PreviousScoresActivity extends ActionBarActivity {
 
 
-    DataService mService;
-    TextView txt;
+    DataService scoreService;
+    ArrayList<ScoresObject> gameScores;
+    private ListView scoreList;
+
+    ServiceConnection scoreServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocalBinder binder = (LocalBinder)service;
+            scoreService =binder.getService();
+            gameScores = scoreService.getGameScores();
+            displayScores();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            scoreService =null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_previous_scores);
-        txt=(TextView)findViewById(R.id.the_previous_scores);
-        mService=MainActivity.getmService();
-        getScores();
+        setContentView(R.layout.activity_previous_scores_list);
+        scoreList = (ListView) findViewById(R.id.score_list);
+
     }
 
-    public void getScores(){
-        int[][] previousScores=mService.getScores();
-        int numScores = mService.getNumScores();
-        String output="";
-        for(int i = 0; i<numScores;i++){
-            output=output+"Game "+(i+1)+":\nPlayer Total: "+previousScores[i][0]+"\nComputer Total: "+previousScores[i][1]+"\n\n";
-        }
-        txt.setText(output);
+    public void displayScores(){
+        ArrayAdapter<ScoresObject> arrayAdapter = new ArrayAdapter<ScoresObject>(
+                this,
+                android.R.layout.simple_list_item_1,
+                gameScores);
+        scoreList.setAdapter(arrayAdapter);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent i = new Intent(PreviousScoresActivity.this,DataService.class);
+        bindService(i, scoreServiceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(scoreServiceConnection);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

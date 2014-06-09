@@ -22,31 +22,29 @@ import java.util.Random;
 
 public class MainActivity extends ActionBarActivity {
 
-    static DataService mService;
-    boolean mBound;
+    DataService scoreService;
     Random rand = new Random();
     Button rollButton;
     Button holdButton;
-    ImageView image;
-    TextView current,player, comp;
+    ImageView dicePicture;
+    TextView currentScoreText, playerScoreText, compScoreText;
     int currentTotal;
     int playerTotal;
     int compTotal;
-    Toast t;
-    boolean turn;//True for player turn, false for computer turn
+    Toast toastText;
+    boolean playerTurn,compTurn;
     boolean gameOver;
 
-    ServiceConnection mConnection = new ServiceConnection() {
+    ServiceConnection scoreServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mBound = true;
             LocalBinder binder = (LocalBinder)service;
-            mService=binder.getService();
+            scoreService =binder.getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mBound=false;
+            scoreService =null;
         }
     };
 
@@ -54,15 +52,16 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        turn=true;
+        playerTurn=true;
+        compTurn=false;
         gameOver=false;
-        image=(ImageView) findViewById(R.id.imageView);
-        current=(TextView)findViewById(R.id.textView);
-        player=(TextView)findViewById(R.id.textView2);
-        comp =(TextView)findViewById(R.id.textView3);
-        rollButton=(Button)findViewById(R.id.button);
-        holdButton=(Button)findViewById(R.id.button2);
-        t = new Toast(getApplicationContext());
+        dicePicture =(ImageView) findViewById(R.id.dice_pic);
+        currentScoreText =(TextView)findViewById(R.id.current_score_text);
+        playerScoreText =(TextView)findViewById(R.id.player_text);
+        compScoreText =(TextView)findViewById(R.id.comp_text);
+        rollButton=(Button)findViewById(R.id.roll_button);
+        holdButton=(Button)findViewById(R.id.hold_button);
+        toastText = new Toast(getApplicationContext());
         currentTotal=0;
         playerTotal=0;
         compTotal =0;
@@ -83,29 +82,32 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void changeTurn(){
-        current.setText("Current Total:             "+currentTotal);
-        if(turn){
-            turn=false;
-            Log.i("run","turn is now false");
-            decide();
+        currentScoreText.setText(getString(R.string.current_score, currentTotal));
+        if(playerTurn){
+            compTurn=true;
+            playerTurn=false;
+            rollButton.setEnabled(false);
+            holdButton.setEnabled(false);
+            computersTurnToRoll();
         } else {
-            turn = true;
-            Log.i("run","turn is now true");
+            playerTurn = true;
+            compTurn = false;
+            rollButton.setEnabled(true);
+            holdButton.setEnabled(true);
         }
     }
 
     public void holdDice(){
-        if(turn) {
+        if(playerTurn) {
             playerTotal += currentTotal;
-            player.setText("Player Total:               " + playerTotal);
+            playerScoreText.setText(getString(R.string.player_score, playerTotal));
         }
         else {
             compTotal += currentTotal;
-            comp.setText("Computer Total:         " + compTotal);
-            Log.i("run","comp score = "+compTotal);
+            compScoreText.setText(getString(R.string.comp_score, compTotal));
         }
         currentTotal=0;
-        current.setText("Current Total:             "+currentTotal);
+        currentScoreText.setText(getString(R.string.current_score, currentTotal));
         if(playerTotal>=100|| compTotal >=100){
             gameOver();
         }
@@ -114,45 +116,48 @@ public class MainActivity extends ActionBarActivity {
     public void setDice(int num){
         currentTotal+=num;
         if(num==1){
-            image.setImageResource(R.drawable.dice_1);
+            dicePicture.setImageResource(R.drawable.dice_1);
             currentTotal=0;
             Log.i("run","it went to 1");
             changeTurn();
             return;
         } else if(num==2){
-            image.setImageResource(R.drawable.dice_2);
+            dicePicture.setImageResource(R.drawable.dice_2);
         } else if(num==3){
-            image.setImageResource(R.drawable.dice_3);
+            dicePicture.setImageResource(R.drawable.dice_3);
         } else if(num==4){
-            image.setImageResource(R.drawable.dice_4);
+            dicePicture.setImageResource(R.drawable.dice_4);
         } else if(num==5){
-            image.setImageResource(R.drawable.dice_5);
+            dicePicture.setImageResource(R.drawable.dice_5);
         } else {
-            image.setImageResource(R.drawable.dice_6);
+            dicePicture.setImageResource(R.drawable.dice_6);
         }
-        current.setText("Current Total:             "+currentTotal);
+        currentScoreText.setText(getString(R.string.current_score, currentTotal));
     }
 
     public void gameOver(){
         gameOver=true;
         if(playerTotal>=100){
-            t.makeText(getApplicationContext(), "Player 1 won", Toast.LENGTH_SHORT).show();
+            toastText.makeText(getApplicationContext(), "Player won", Toast.LENGTH_SHORT).show();
         } else {
-            t.makeText(getApplicationContext(),"Player 2 won", Toast.LENGTH_SHORT).show();
+            toastText.makeText(getApplicationContext(), "Computer won", Toast.LENGTH_SHORT).show();
         }
-        mService.store(playerTotal, compTotal);
+        scoreService.store(playerTotal, compTotal);
+        Log.i("run",""+scoreService.getGameScores());
         newGame();
-    }
-
-    public static DataService getmService(){
-        return mService;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Intent i = new Intent(this,DataService.class);
-        bindService(i, mConnection, BIND_AUTO_CREATE);
+        bindService(i, scoreServiceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(scoreServiceConnection);
     }
 
     @Override
@@ -170,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.new_game) {
-            t.makeText(getApplicationContext(), "New Game", Toast.LENGTH_SHORT).show();
+            toastText.makeText(getApplicationContext(), "New Game", Toast.LENGTH_SHORT).show();
             newGame();
         }
         if (id == R.id.previous) {
@@ -185,65 +190,51 @@ public class MainActivity extends ActionBarActivity {
         playerTotal=0;
         compTotal =0;
         currentTotal=0;
-        current.setText("Current Total:             "+currentTotal);
-        player.setText("Player Total:               " + playerTotal);
-        comp.setText("Computer Total:         " + compTotal);
-        if(turn&&gameOver) {
-            turn = false;
+        currentScoreText.setText(getString(R.string.current_score, currentTotal));
+        playerScoreText.setText(getString(R.string.player_score, playerTotal));
+        compScoreText.setText(getString(R.string.comp_score, compTotal));
+        if(playerTurn&&gameOver) {
+            playerTurn = false;
+            compTurn = true;
             gameOver=false;
-        } else
-            turn=true;
+        } else {
+            playerTurn = true;
+            compTurn = false;
+        }
+        rollButton.setEnabled(true);
+        holdButton.setEnabled(true);
     }
 
     public int getRandomNumber(){
         return rand.nextInt(6)+1;
     }
 
-    public void decide(){
-        Log.i("run","decide is now called");
-        ComputerTurn t = new ComputerTurn();
+    public void computersTurnToRoll(){
+        Log.i("run","computersTurnToRoll is now called");
+        RunComputerTurn t = new RunComputerTurn();
         t.execute();
-
-        rollButton.setEnabled(true);
-        holdButton.setEnabled(true);
     }
 
-    private class ComputerTurn extends AsyncTask<Void,Void,Void>{
+    private class RunComputerTurn extends AsyncTask<Void,Void,Void>{
         int num;
         int count;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            rollButton.setEnabled(false);
-            holdButton.setEnabled(false);
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.i("run","onPostExecute is now called");
-            try {
-                Thread.sleep(1000);
-                setDice(num);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if(compTurn) {
+                        setDice(num);
+                    }
+                }
+            });
 
-                if(!turn&&currentTotal>=20&&count==1) {
-                    holdDice();
-                    if(!turn)
-                        changeTurn();
-                }
-                else if(!turn&currentTotal>=10&&count==0){
-                    holdDice();
-                    if(!turn)
-                        changeTurn();
-                }
-                else if(!turn){
-                    decide();
-                }
-                Thread.sleep(1000);
-                Log.i("run","it completed the onPostExecute");
-            } catch (InterruptedException i){
-                i.getStackTrace();
-            }
         }
 
         @Override
@@ -256,6 +247,33 @@ public class MainActivity extends ActionBarActivity {
             num = getRandomNumber();
             count=num%2;
             Log.i("run","doInBackground is now called");
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e){
+                e.getStackTrace();
+            }
+
+            if(compTurn&&currentTotal>=20&&count==1) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        holdDice();
+                        if(compTurn)
+                            changeTurn();
+                    }
+                });
+            }
+            else if(compTurn&currentTotal>=10&&count==0){
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        holdDice();
+                        if(compTurn)
+                            changeTurn();
+                    }
+                });
+            }
+            else if(compTurn){
+                computersTurnToRoll();
+            }
             return null;
         }
     }
