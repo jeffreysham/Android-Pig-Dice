@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class DataService extends Service{
 
     private IBinder mBinder = new LocalBinder();
+
     ArrayList<ScoresObject> gameScores;
 
     @Override

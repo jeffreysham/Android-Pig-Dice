@@ -6,7 +6,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -15,7 +14,6 @@ import com.example.pigdiceapp.app.DataService.LocalBinder;
 import java.util.ArrayList;
 
 public class PreviousScoresActivity extends ActionBarActivity {
-
 
     DataService scoreService;
     ArrayList<ScoresObject> gameScores;
@@ -44,7 +42,7 @@ public class PreviousScoresActivity extends ActionBarActivity {
 
     }
 
-    public void displayScores(){
+    public void displayScores() {
         ArrayAdapter<ScoresObject> arrayAdapter = new ArrayAdapter<ScoresObject>(
                 this,
                 android.R.layout.simple_list_item_1,
