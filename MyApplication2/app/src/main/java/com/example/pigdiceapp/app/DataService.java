@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jsham on 6/3/14.
@@ -14,12 +15,12 @@ public class DataService extends Service{
 
     private IBinder mBinder = new LocalBinder();
 
-    ArrayList<ScoresObject> gameScores;
+    List<ScoreRowItem> gameScores;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        gameScores = new ArrayList<ScoresObject>();
+        gameScores = new ArrayList<ScoreRowItem>();
     }
 
     @Override
@@ -35,11 +36,11 @@ public class DataService extends Service{
     }
 
     public void store(int playerScore, int compScore){
-        ScoresObject temp = new ScoresObject(playerScore,compScore);
+        ScoreRowItem temp = new ScoreRowItem(getString(R.string.player_score),getString(R.string.comp_score),playerScore,compScore);
         gameScores.add(temp);
     }
 
-    public ArrayList<ScoresObject> getGameScores(){
+    public List<ScoreRowItem> getGameScores(){
         return gameScores;
     }
 

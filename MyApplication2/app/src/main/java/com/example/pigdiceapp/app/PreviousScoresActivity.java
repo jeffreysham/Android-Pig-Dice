@@ -8,16 +8,15 @@ import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.example.pigdiceapp.app.DataService.LocalBinder;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PreviousScoresActivity extends ActionBarActivity {
 
     DataService scoreService;
-    ArrayList<ScoresObject> gameScores;
-    private ListView scoreList;
+    List<ScoreRowItem> gameScores;
+    ListView scoreList;
 
     ServiceConnection scoreServiceConnection = new ServiceConnection() {
         @Override
@@ -37,17 +36,14 @@ public class PreviousScoresActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_previous_scores_list);
+        setContentView(R.layout.custom_previous_scores_list);
         scoreList = (ListView) findViewById(R.id.score_list);
 
     }
 
     public void displayScores() {
-        ArrayAdapter<ScoresObject> arrayAdapter = new ArrayAdapter<ScoresObject>(
-                this,
-                android.R.layout.simple_list_item_1,
-                gameScores);
-        scoreList.setAdapter(arrayAdapter);
+        CustomScoresListViewAdapter scoresListViewAdapter = new CustomScoresListViewAdapter(this, R.layout.scores_rows,gameScores);
+        scoreList.setAdapter(scoresListViewAdapter);
     }
 
     @Override

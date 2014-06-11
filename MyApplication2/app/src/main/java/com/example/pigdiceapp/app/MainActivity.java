@@ -56,9 +56,9 @@ public class MainActivity extends ActionBarActivity {
         compTurn=false;
         gameOver=false;
         dicePicture =(ImageView) findViewById(R.id.dice_pic);
-        currentScoreText =(TextView)findViewById(R.id.current_score_text);
-        playerScoreText =(TextView)findViewById(R.id.player_text);
-        compScoreText =(TextView)findViewById(R.id.comp_text);
+        currentScoreText =(TextView)findViewById(R.id.current_score_value);
+        playerScoreText =(TextView)findViewById(R.id.player_score_value);
+        compScoreText =(TextView)findViewById(R.id.comp_score_value);
         rollButton=(Button)findViewById(R.id.roll_button);
         holdButton=(Button)findViewById(R.id.hold_button);
         toastText = new Toast(getApplicationContext());
@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void changeTurn(){
-        currentScoreText.setText(getString(R.string.current_score, currentTotal));
+        currentScoreText.setText(""+currentTotal);
         if(playerTurn){
             compTurn=true;
             playerTurn=false;
@@ -100,14 +100,14 @@ public class MainActivity extends ActionBarActivity {
     public void holdDice(){
         if(playerTurn) {
             playerTotal += currentTotal;
-            playerScoreText.setText(getString(R.string.player_score, playerTotal));
+            playerScoreText.setText(""+playerTotal);
         }
         else {
             compTotal += currentTotal;
-            compScoreText.setText(getString(R.string.comp_score, compTotal));
+            compScoreText.setText(""+compTotal);
         }
         currentTotal=0;
-        currentScoreText.setText(getString(R.string.current_score, currentTotal));
+        currentScoreText.setText(""+currentTotal);
         if(playerTotal>=100|| compTotal >=100){
             gameOver();
         }
@@ -132,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             dicePicture.setImageResource(R.drawable.dice_6);
         }
-        currentScoreText.setText(getString(R.string.current_score, currentTotal));
+        currentScoreText.setText(""+currentTotal);
     }
 
     public void gameOver(){
@@ -190,9 +190,9 @@ public class MainActivity extends ActionBarActivity {
         playerTotal=0;
         compTotal =0;
         currentTotal=0;
-        currentScoreText.setText(getString(R.string.current_score, currentTotal));
-        playerScoreText.setText(getString(R.string.player_score, playerTotal));
-        compScoreText.setText(getString(R.string.comp_score, compTotal));
+        currentScoreText.setText(""+currentTotal);
+        playerScoreText.setText(""+playerTotal);
+        compScoreText.setText(""+compTotal);
         if(playerTurn&&gameOver) {
             playerTurn = false;
             compTurn = true;

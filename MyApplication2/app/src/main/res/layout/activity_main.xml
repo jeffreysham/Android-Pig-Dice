@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current Total:             0"
+        android:text="Current Total:"
         android:id="@+id/current_score_text"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Player Total:               0"
+        android:text="Player Total:"
         android:id="@+id/player_text"
         android:layout_marginTop="39dp"
         android:layout_alignTop="@+id/current_score_text"
@@ -40,7 +40,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Computer Total:         0"
+        android:text="Computer Total:"
         android:id="@+id/comp_text"
         android:layout_below="@+id/player_text"
         android:layout_alignParentLeft="true"
@@ -66,4 +66,35 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="0"
+        android:id="@+id/current_score_value"
+        android:layout_alignTop="@+id/current_score_text"
+        android:layout_alignLeft="@+id/dice_pic"
+        android:layout_alignStart="@+id/dice_pic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="0"
+        android:id="@+id/player_score_value"
+        android:layout_alignTop="@+id/player_text"
+        android:layout_alignLeft="@+id/current_score_value"
+        android:layout_alignStart="@+id/current_score_value" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="0"
+        android:id="@+id/comp_score_value"
+        android:layout_alignTop="@+id/comp_text"
+        android:layout_alignLeft="@+id/player_score_value"
+        android:layout_alignStart="@+id/player_score_value"
+        android:singleLine="true" />
 </RelativeLayout>
